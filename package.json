@@ -1,0 +1,11 @@
+{
+  "name": "elm-todo-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "elm-hot": "^1.0.1",
+    "node-elm-compiler": "^5.0.1",
+    "parcel": "^1.11.0"
+  }
+}
