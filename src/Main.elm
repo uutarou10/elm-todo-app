@@ -18,7 +18,7 @@ main =
 init : () -> ( Model, Cmd Msg )
 init flags =
     ( { todos =
-            [ Todo "test" "牛乳を買う" False High
+            [ Todo 0 "牛乳を買う" False High
             ]
       , filter = All
       , draftTitle = ""
@@ -37,7 +37,7 @@ type alias Model =
 
 
 type alias Todo =
-    { id : String
+    { id : Int
     , title : String
     , isCompleted : Bool
     , importance : Importance
@@ -60,6 +60,7 @@ type Msg
     = NoOp
     | UpdateTitle String
     | UpdateImportance String
+    | AddTodo
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -90,6 +91,33 @@ update msg model =
             in
             ( { model | draftImportance = newImportance }, Cmd.none )
 
+        AddTodo ->
+            let
+                newId : Int
+                newId =
+                    case List.reverse model.todos |> List.head of
+                        Just lastTodo ->
+                            lastTodo.id + 1
+
+                        Nothing ->
+                            1
+
+                newTodo : Todo
+                newTodo =
+                    { id = newId
+                    , title = model.draftTitle
+                    , isCompleted = False
+                    , importance = model.draftImportance
+                    }
+            in
+            ( { model
+                | todos = newTodo :: List.reverse model.todos |> List.reverse
+                , draftTitle = ""
+                , draftImportance = Mid
+              }
+            , Cmd.none
+            )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -103,7 +131,12 @@ view model =
         form =
             div []
                 [ div []
-                    [ input [ type_ "text", onInput UpdateTitle ] []
+                    [ input
+                        [ type_ "text"
+                        , onInput UpdateTitle
+                        , value model.draftTitle
+                        ]
+                        []
                     , select [ onInput UpdateImportance ]
                         [ option [ value "High", selected (model.draftImportance == High) ] [ text "High" ]
                         , option [ value "Mid", selected (model.draftImportance == Mid) ] [ text "Mid" ]
@@ -111,7 +144,7 @@ view model =
                         ]
                     ]
                 , div []
-                    [ button [] [ text "ADD" ] ]
+                    [ button [ onClick AddTodo ] [ text "ADD" ] ]
                 ]
 
         todoItem : Todo -> Html Msg
