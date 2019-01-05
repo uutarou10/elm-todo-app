@@ -37,6 +37,10 @@ body {
   margin: 8px;
 }
 
+.todo p {
+  word-break: break-all;
+}
+
 .todo.high p {
   color: red;
   font-weight: bold;
