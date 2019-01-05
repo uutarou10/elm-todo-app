@@ -1,0 +1,51 @@
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.container {
+  width: 50vw;
+  margin: 0 auto;
+}
+
+#title {
+  text-align: center;
+}
+
+#form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#form > * {
+  display: inline-block;
+  font-size: 1.1em;
+}
+
+#form input, select, button {
+  font-size: 1.2em;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+.todo {
+  display: flex;
+  align-items: center;
+}
+
+.todo input {
+  margin: 8px;
+}
+
+.todo.high p {
+  color: red;
+  font-weight: bold;
+}
+
+.todo.low {
+  color: gray;
+}
+
+.todo.completed > p {
+  text-decoration: line-through;
+}

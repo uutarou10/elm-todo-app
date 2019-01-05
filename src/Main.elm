@@ -145,7 +145,7 @@ view model =
     let
         form : Html Msg
         form =
-            Html.form [ onSubmit AddTodo ]
+            Html.form [ onSubmit AddTodo, id "form" ]
                 [ div []
                     [ input
                         [ type_ "text"
@@ -163,21 +163,31 @@ view model =
                 , div []
                     [ button
                         [ disabled (String.length model.draftTitle == 0) ]
-                        [ text "ADD" ]
+                        [ text "Add" ]
                     ]
                 ]
 
         todoItem : Todo -> Html Msg
         todoItem todo =
-            li []
+            li
+                [ class "todo"
+                , classList
+                    [ ( "completed", todo.isCompleted )
+                    , ( "high", todo.importance == High )
+                    , ( "mid", todo.importance == Mid )
+                    , ( "low", todo.importance == Low )
+                    ]
+                ]
                 [ input [ type_ "checkbox", checked todo.isCompleted, onClick (ToggleCompleted todo.id) ] []
                 , p [ onClick (ToggleCompleted todo.id) ] [ text todo.title ]
                 ]
     in
     { title = "Elm Todo"
     , body =
-        [ h1 [] [ text "Elm todo app" ]
-        , form
-        , ul [] (List.map todoItem model.todos)
+        [ div [ class "container" ]
+            [ h1 [ id "title" ] [ text "Elm todo app" ]
+            , form
+            , ul [] (List.map todoItem model.todos)
+            ]
         ]
     }
