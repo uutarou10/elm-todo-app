@@ -61,6 +61,7 @@ type Msg
     | UpdateTitle String
     | UpdateImportance String
     | AddTodo
+    | ToggleCompleted Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -118,6 +119,21 @@ update msg model =
             , Cmd.none
             )
 
+        ToggleCompleted id ->
+            let
+                newTodos =
+                    List.map
+                        (\t ->
+                            if t.id == id then
+                                { t | isCompleted = not t.isCompleted }
+
+                            else
+                                t
+                        )
+                        model.todos
+            in
+            ( { model | todos = newTodos }, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -129,12 +145,13 @@ view model =
     let
         form : Html Msg
         form =
-            div []
+            Html.form [ onSubmit AddTodo ]
                 [ div []
                     [ input
                         [ type_ "text"
                         , onInput UpdateTitle
                         , value model.draftTitle
+                        , required True
                         ]
                         []
                     , select [ onInput UpdateImportance ]
@@ -144,19 +161,23 @@ view model =
                         ]
                     ]
                 , div []
-                    [ button [ onClick AddTodo ] [ text "ADD" ] ]
+                    [ button
+                        [ disabled (String.length model.draftTitle == 0) ]
+                        [ text "ADD" ]
+                    ]
                 ]
 
         todoItem : Todo -> Html Msg
         todoItem todo =
             li []
-                [ input [ type_ "checkbox", checked todo.isCompleted ] []
-                , p [] [ text todo.title ]
+                [ input [ type_ "checkbox", checked todo.isCompleted, onClick (ToggleCompleted todo.id) ] []
+                , p [ onClick (ToggleCompleted todo.id) ] [ text todo.title ]
                 ]
     in
     { title = "Elm Todo"
     , body =
-        [ form
+        [ h1 [] [ text "Elm todo app" ]
+        , form
         , ul [] (List.map todoItem model.todos)
         ]
     }
